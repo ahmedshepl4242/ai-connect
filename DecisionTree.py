@@ -31,7 +31,14 @@ class DecisionTree:
         legal_moves = self.get_legal_moves(node.board)
         for move in legal_moves:
             new_board = self.make_move(node.board, move, 'O' if is_maximizing else 'X')
-            child_node = Node(new_board, move=move)
+            score=0
+            # if is_maximizing:
+            #     score = float('-inf')  # Maximizing player's score starts as negative infinity
+            # else:
+            #     score = float('-inf')   # Minimizing player's score starts as positive infinity
+    
+            # Create and return the child node
+            child_node = Node(new_board, move=move, score=score)
             node.children.append(child_node)
             self.generate_tree(child_node, depth - 1, not is_maximizing)
 
@@ -82,12 +89,17 @@ class DecisionTree:
         """
         Evaluate the board state (heuristic function).
         """
+        # print(board)
         if self.ai_algorithm == 'Heuristic AI':
-            return self.heuristic_function.heuristic_function_square(board,1)
+            value= self.heuristic_function.heuristic_function_square(board,'O')
+            # print (value)
+            return value
         elif self.ai_algorithm == 'aggressive':
-            return self.heuristic_function.aggressive_heuristic(board, 1)
+            value= self.heuristic_function.aggressive_heuristic(board, 'O')
+            # print (value)
+            return value
         elif self.ai_algorithm == 'defensive':
-            return self.heuristic_function.defensive_heuristic(board, 1)
+            return self.heuristic_function.defensive_heuristic(board, 'O')
         else:
             raise ValueError("Invalid AI algorithm")
 
@@ -132,14 +144,5 @@ class DecisionTree:
 
 
 
-# Example Usage
-if __name__ == "__main__":
-    from decision_tree import DecisionTree, Node  # Import your decision tree implementation
-
-    # Sample board and decision tree
-    initial_board = [[0] * 7 for _ in range(6)]  # Empty board
-    tree = DecisionTree(initial_board)
-    tree.generate_tree(tree.root, depth=3, is_maximizing=True)
-
-    # Visualize the tree
+ 
  

@@ -1,5 +1,7 @@
 import math
 
+from Node import Node
+
 class MinMax:
     """
     Minimax implementation for a game, supporting the given board representation with X and O players.
@@ -13,6 +15,7 @@ class MinMax:
         Minimax algorithm without pruning.
         """
         if depth == 0 or self.is_terminal(node.board):
+            # node.score = HeuristicF.evaluate_board(node.board)
             return node.score
 
         if is_maximizing:
@@ -20,12 +23,16 @@ class MinMax:
             for child in node.children:
                 val = self.minimax(child, depth - 1, False)
                 best_val = max(best_val, val)
+            node.score = best_val
+            print(node.score)
             return best_val
         else:
             best_val = math.inf
             for child in node.children:
                 val = self.minimax(child, depth - 1, True)
                 best_val = min(best_val, val)
+            node.score = best_val
+            print(node.score)
             return best_val
 
     def minimax_pruning(self, node, depth, alpha, beta, is_maximizing):
@@ -111,32 +118,19 @@ class MinMax:
                 break
         return new_board
 
+    def generate_children(self, node, is_maximizing):
+        """
+        Generates child nodes based on all legal moves.
+        """
+        legal_moves = self.get_legal_moves(node.board)
+        children = []
+        for move in legal_moves:
+            player = 'X' if is_maximizing else 'O'
+            new_board = self.make_move(node.board, move, player)
+            child_node = Node(new_board, move)
+            children.append(child_node)
+        node.children = children
+        return children
 
-# Example Usage
-if __name__ == "__main__":
-    # Initial board state with 'X' and 'O' players
-    initial_board = [
-        [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-        ['X', ' ', 'O', ' ', ' ', ' ', ' ']
-    ]
-
-    # Initialize MinMax
-    minimax_solver = MinMax(depth=3, is_maximizing=True)
-
-    # Example node representation
-    class Node:
-        def __init__(self, board, score=0):
-            self.board = board
-            self.score = score
-            self.children = []
-
-    # Example node for testing
-    root_node = Node(initial_board)
-
-    # Use minimax or minimax with pruning
-    score = minimax_solver.minimax(root_node, depth=3, is_maximizing=True)
-    print(f"Minimax score: {score}")
+ 
+ 

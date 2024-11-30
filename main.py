@@ -13,10 +13,10 @@ class ConnectFourApp:
         self.root = tk.Tk()
         self.root.title("Connect Four")
         self.root.configure(bg=BG_COLOR)
-        max_depth=3
+        max_depth=2
         
         # Initialize MVC components
-        heuristic_function= HeuristicFunction()
+        heuristic_function= HeuristicFunction(max_depth)
         minMax=MinMax(max_depth,True)
         self.board_model = BoardModel(ROWS, COLS)
         self.game_controller = GameController(max_depth,self.board_model, None,heuristic_function,minMax)

@@ -1,40 +1,38 @@
 import random
 
-
 class HeuristicFunction:
-    def _init_ (self,k):
+    def __init__(self, k):
         self.k = k
         # self.board = board
-    
-
 
     def evaluate_board(self, board):
         """
         Evaluate the board state (heuristic function).
         """
-        
         score = 0
         for row in board:
-            score += sum(row)
+            score += sum(1 for cell in row if cell == 'X')  # Count 'X' as positive
+            score -= sum(1 for cell in row if cell == 'O')  # Count 'O' as negative
         return score
-    
-    def get_legal_moves(self,board):
+
+    def get_legal_moves(self, board):
         """
         Get all legal moves (columns not full).
         """
         return [col for col in range(len(board[0])) if board[0][col] == ' ']
-    
 
-    def random_choice(self,board):
+    def random_choice(self, board):
         """
         Randomly choose a column from the available moves.
         """
         return random.choice(self.get_legal_moves(board))
-    def defensive_heuristic(self,board, agent_id):
-        potential_danger = self.estimate_danger(board,agent_id)  # Hypothetical function estimating threats
-        agent_safety_score = self.evaluate_safety(board,agent_id)  # Evaluate defensive position
+
+    def defensive_heuristic(self, board, agent_id):
+        potential_danger = self.estimate_danger(board, agent_id)  # Hypothetical function estimating threats
+        agent_safety_score = self.evaluate_safety(board, agent_id)  # Evaluate defensive position
         return -potential_danger + agent_safety_score
-    def aggressive_heuristic(self,board, agent_id=1):
+
+    def aggressive_heuristic(self, board, agent_id='X'):
         rows, cols = len(board), len(board[0])
         score = 0
 
@@ -46,7 +44,7 @@ class HeuristicFunction:
                 if 0 <= nr < rows and 0 <= nc < cols:
                     if board[nr][nc] == agent_id:
                         count += 1
-                    elif board[nr][nc] != 0:
+                    elif board[nr][nc] != ' ':
                         return count  # Blocked direction
                 else:
                     break
@@ -72,9 +70,9 @@ class HeuristicFunction:
 
         return score
 
-    def estimate_danger(self,board,agent_id=1):
+    def estimate_danger(self, board, agent_id='X'):
         rows, cols = len(board), len(board[0])
-        opponent_id = 3 - agent_id  # If agent_id is 1, opponent_id is 2, and vice versa.
+        opponent_id = 'O' if agent_id == 'X' else 'X'  # If agent_id is 'X', opponent_id is 'O', and vice versa.
         danger_score = 0
 
         def count_in_direction(r, c, dr, dc):
@@ -85,7 +83,7 @@ class HeuristicFunction:
                 if 0 <= nr < rows and 0 <= nc < cols:
                     if board[nr][nc] == opponent_id:
                         count += 1
-                    elif board[nr][nc] == 0:
+                    elif board[nr][nc] == ' ':
                         empty_slots += 1
                 else:
                     break
@@ -101,7 +99,8 @@ class HeuristicFunction:
                             danger_score += count ** 2  # Quadratic weighting (more pieces = higher threat)
 
         return danger_score
-    def evaluate_safety(self,board, agent_id=1):
+
+    def evaluate_safety(self, board, agent_id='X'):
         rows, cols = len(board), len(board[0])
         safety_score = 0
 
@@ -113,7 +112,7 @@ class HeuristicFunction:
                 if 0 <= nr < rows and 0 <= nc < cols:
                     if board[nr][nc] == agent_id:
                         count += 1
-                    elif board[nr][nc] == 0:
+                    elif board[nr][nc] == ' ':
                         empty_slots += 1
                 else:
                     break
@@ -129,11 +128,10 @@ class HeuristicFunction:
                             safety_score += count ** 2  # More pieces = higher safety
 
         return safety_score
-   
 
-    def heuristic_function_square(self,board, agent_id):
+    def heuristic_function_square(self, board, agent_id='X'):
         rows, cols = len(board), len(board[0])
-        opponent_id = 3 - agent_id  # Opponent's ID
+        opponent_id = 'O' if agent_id == 'X' else 'X'  # Set opponent as the opposite of agent
         weight_matrix = self.get_weight_matrix(rows, cols)
         score = 0
         # Evaluate the board
@@ -145,8 +143,9 @@ class HeuristicFunction:
                     score -= weight_matrix[r][c]  # Subtract value for opponent's pieces
 
         return score
-    def get_weight_matrix(self,rows, cols):
-    # Central columns are weighted more heavily
+
+    def get_weight_matrix(self, rows, cols):
+        # Central columns are weighted more heavily
         weight_matrix = []
         for r in range(rows):
             row_weights = []
@@ -155,6 +154,3 @@ class HeuristicFunction:
                 row_weights.append(cols // 2 - center_dist + 1)  # Assign higher values near the center
             weight_matrix.append(row_weights)
         return weight_matrix
-
-
-

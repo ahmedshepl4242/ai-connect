@@ -49,39 +49,21 @@ class GameController:
                 # initial_board = [[0] * 7 for _ in range(6)]  # Empty board
                 decisionTree=DecisionTree(self.board.grid,self.ai_algorithm,self.heuristic_function)
                 decisionTree.generate_tree(decisionTree.root, self.k, True)
+                self.minMax.minimax(decisionTree.root, self.k, True)
+                bestNode = decisionTree.root.children[0]
                 visualizer = DecisionTreeVisualizer(decisionTree)
                 visualizer.visualize_tree()
 
-                self.minMax.minimax(decisionTree.root, self.k, True)
-                bestNode = decisionTree.root.children[0]
+              
                 for child in decisionTree.root.children:
                     if child.score > bestNode.score:
                         bestNode = child
-                print(bestNode.board)
+                # print(bestNode.board)
                 self.board.grid=bestNode.board
                 self.view.update_board(bestNode.board.copy())
                 self.switch_player()
                 self.view.update_status(self.current_player)
 
-
-
-
-                # if self.ai_algorithm == "aggressive":
-                #     col=self.heuristic_function.aggressive_heuristic(self.board.grid, 1)
-                #     self.handle_click(col)
-                # elif self.ai_algorithm == "defensive":
-                #     # Call defensive AI logic
-                #     #  print(self.board.grid)
-                #     col = self.heuristic_function.defensive_heuristic(self.board.grid, 1)
-                #     self.handle_click(col)
-                #     pass
-            
-                # elif self.ai_algorithm == "Heuristic AI":
-                #     # Call random AI logic
-                #     #  print(self.board.grid)
-                #     col = self.heuristic_function.heuristic_ai(self.board.grid, 1)
-                #     self.handle_click(col)
-                #     pass
             else:
                 col = self.heuristic_function.random_choice(self.board.grid)
                 self.handle_click(col)
