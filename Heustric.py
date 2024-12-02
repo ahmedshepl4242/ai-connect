@@ -1,19 +1,16 @@
 import random
 
+from heuristic2 import HeuristicFunction2
+
 class HeuristicFunction:
     def __init__(self, k):
         self.k = k
         # self.board = board
 
     def evaluate_board(self, board):
-        """
-        Evaluate the board state (heuristic function).
-        """
-        score = 0
-        for row in board:
-            score += sum(1 for cell in row if cell == 'X')  # Count 'X' as positive
-            score -= sum(1 for cell in row if cell == 'O')  # Count 'O' as negative
-        return score
+        heuristic=HeuristicFunction2(1)
+        return heuristic.evaluate_board(board)
+        
 
     def get_legal_moves(self, board):
         """

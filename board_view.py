@@ -48,6 +48,12 @@ class BoardView(tk.Frame):
             font=('Arial', 12),
             command=lambda: self.start_game("Heuristic AI")
         ).pack(pady=5)
+        tk.Button(
+            self.algorithm_frame,
+            text="other",
+            font=('Arial', 12),
+            command=lambda: self.start_game("other")
+        ).pack(pady=5)
         
         # The game board will be hidden initially
         self.board_frame = None
@@ -69,6 +75,33 @@ class BoardView(tk.Frame):
             pady=PADDING
         )
         self.board_frame.pack()
+
+      
+         # Scoreboard frame
+        self.score_frame = tk.Frame(self, bg=BG_COLOR)
+        self.score_frame.pack(pady=10)
+
+        # Human score label
+        self.human_score_label = tk.Label(
+            self.score_frame,
+            text=f"Human:{self.controller.board.score['X']}",
+            font=('Arial', 12),
+            bg=BG_COLOR
+        )
+        self.human_score_label.grid(row=0, column=0, padx=10)
+
+        # AI score label
+        self.ai_score_label = tk.Label(
+            self.score_frame,
+            text= f"AI: {self.controller.board.score['O']}",
+
+            font=('Arial', 12),
+            bg=BG_COLOR
+        )
+        self.ai_score_label.grid(row=0, column=1, padx=10)
+
+
+        #  board 
         
         # Create status label
         self.status_label = tk.Label(
@@ -124,7 +157,15 @@ class BoardView(tk.Frame):
             CELL_SIZE//2 + PIECE_RADIUS,
             fill=PLAYER_COLORS[player]
         )
+        self.update_scores()
+
      
+
+    def update_scores(self):
+        """Update the score labels dynamically."""
+        self.human_score_label.config(text=f"Human: {self.controller.board.score['X']}")
+        self.ai_score_label.config(text=f"AI: {self.controller.board.score['O']}")
+
     def update_board(self, board):
         """Update the entire board based on the current state."""
         for row in range(ROWS):
@@ -143,6 +184,9 @@ class BoardView(tk.Frame):
                         CELL_SIZE//2 + PIECE_RADIUS,
                         fill=PLAYER_COLORS[player]  # Set color based on the player (red for X, yellow for O)
                     )
+                    # self.update_scores()
+
+                    
                 else:
                     # Optionally, you could redraw empty cells with an empty circle
                     cell.create_oval(

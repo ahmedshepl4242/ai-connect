@@ -13,7 +13,7 @@ class ConnectFourApp:
         self.root = tk.Tk()
         self.root.title("Connect Four")
         self.root.configure(bg=BG_COLOR)
-        max_depth=2
+        max_depth=6
         
         # Initialize MVC components
         heuristic_function= HeuristicFunction(max_depth)

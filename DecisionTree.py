@@ -100,6 +100,8 @@ class DecisionTree:
             return value
         elif self.ai_algorithm == 'defensive':
             return self.heuristic_function.defensive_heuristic(board, 'O')
+        elif self.ai_algorithm == 'other':
+            return self.heuristic_function.evaluate_board(board)
         else:
             raise ValueError("Invalid AI algorithm")
 

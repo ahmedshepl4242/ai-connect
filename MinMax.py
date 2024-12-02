@@ -24,7 +24,7 @@ class MinMax:
                 val = self.minimax(child, depth - 1, False)
                 best_val = max(best_val, val)
             node.score = best_val
-            print(node.score)
+            # print(node.score)
             return best_val
         else:
             best_val = math.inf
@@ -32,10 +32,10 @@ class MinMax:
                 val = self.minimax(child, depth - 1, True)
                 best_val = min(best_val, val)
             node.score = best_val
-            print(node.score)
+            # print(node.score)
             return best_val
 
-    def minimax_pruning(self, node, depth, alpha, beta, is_maximizing):
+    def minimax_pruning(self, node, depth, alpha=float(-math.inf), beta=float(math.inf), is_maximizing=True):
         """
         Minimax algorithm with alpha-beta pruning.
         """
@@ -50,6 +50,7 @@ class MinMax:
                 alpha = max(alpha, val)
                 if beta <= alpha:
                     break
+            node.score=best_val
             return best_val
         else:
             best_val = math.inf
@@ -59,6 +60,7 @@ class MinMax:
                 beta = min(beta, val)
                 if beta <= alpha:
                     break
+            node.score=best_val
             return best_val
 
     def is_terminal(self, board):
