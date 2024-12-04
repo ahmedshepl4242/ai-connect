@@ -2,10 +2,12 @@ import math
 
 from Node import Node
 
+
 class MinMax:
     """
     Minimax implementation for a game, supporting the given board representation with X and O players.
     """
+
     def __init__(self, depth, is_maximizing):
         self.depth = depth
         self.is_maximizing = is_maximizing
@@ -45,12 +47,13 @@ class MinMax:
         if is_maximizing:
             best_val = -math.inf
             for child in node.children:
-                val = self.minimax_pruning(child, depth - 1, alpha, beta, False)
+                val = self.minimax_pruning(
+                    child, depth - 1, alpha, beta, False)
                 best_val = max(best_val, val)
                 alpha = max(alpha, val)
                 if beta <= alpha:
                     break
-            node.score=best_val
+            node.score = best_val
             return best_val
         else:
             best_val = math.inf
@@ -60,8 +63,40 @@ class MinMax:
                 beta = min(beta, val)
                 if beta <= alpha:
                     break
-            node.score=best_val
+            node.score = best_val
             return best_val
+
+    def expect(self, node, depth, is_maximizing, chance_node):
+        """
+        expected Minimax algorithm without pruning.
+        """
+        if depth == 0 or self.is_terminal(node.board):
+            return node.score
+
+        if chance_node:
+            arr = [0.6, 0.4]
+            i = 0
+            for child in node.children:
+                node.score += arr[i] * \
+                    self.expect(child, depth - 1, is_maximizing, False)
+                i += 1
+            return node.score
+
+        else:
+            if is_maximizing:
+                best_val = -math.inf
+                for child in node.children:
+                    val = self.expect(child, depth - 1, False, True)
+                    best_val = max(best_val, val)
+                node.score = best_val
+                return best_val
+            else:
+                best_val = math.inf
+                for child in node.children:
+                    val = self.expect(child, depth - 1, True, True)
+                    best_val = min(best_val, val)
+                node.score = best_val
+                return best_val
 
     def is_terminal(self, board):
         """
@@ -133,6 +168,3 @@ class MinMax:
             children.append(child_node)
         node.children = children
         return children
-
- 
- 
